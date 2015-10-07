@@ -6,7 +6,7 @@
 	
 	Downloads latest version of microformat-shiv and it tests form github repo
 	Files downloaded:
-	* microformat-shiv.js
+	* microformat-shiv.js (note: modern version)
 	* lib
 	* test/interface-tests
 	* test/module-tests
@@ -33,7 +33,7 @@ var repo = 'glennjones/microformat-shiv',
 	tempDir = path.resolve(__dirname,'temp-repo'),
 	deployDirResolved = path.resolve(__dirname, deployDir),
 	pathList = [
-		['/microformat-shiv.js','/microformat-shiv.js'],
+		['/modern/microformat-shiv-modern.js','/microformat-shiv.js'],
 		['/lib','/test/lib'],
 		['/test/interface-tests','/test/interface-tests'],
 		['/test/module-tests','/test/module-tests'],
