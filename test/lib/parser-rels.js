@@ -90,29 +90,7 @@ var Modules = (function (modules) {
 					if(url && out['rel-urls'][url] === undefined){
 						out['rel-urls'][url] = relUrl;
 					}
-					
-					if(relList.toLowerCase().indexOf('alternate') > -1){	
-						// if its an alternate add 
-						var obj = this.getRelProperties(arr[x]);
-						if(url){
-							obj.url = url;
-						}
 	
-						if(items.length > 1){
-							if(modules.domUtils.hasAttribute(arr[x], 'rel')){
-								var clonedRelList = relList;
-								obj.rel = modules.utils.trim( clonedRelList.toLowerCase().replace('alternate','') );
-							}
-						}
-						// create the key
-						if(!out.alternate) {
-							out.alternate = [];
-						}
-						out.alternate.push( obj );
-					}
-						
-	
-					
 			
 				}
 				x++;
@@ -170,7 +148,7 @@ var Modules = (function (modules) {
 							propName = (prop.map) ? prop.map : 'p-' + key,
 							relCount = 0;
 		
-						// if property as an alt rel=* mapping run test
+						// is property an alt rel=* mapping 
 						if(prop.relAlt && modules.domUtils.hasAttribute(node, 'rel')) {
 							i = prop.relAlt.length;
 							while(i--) {
@@ -190,7 +168,7 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * returns weather a node or its children has rel=* microformat
+		 * returns whether a node or its children has rel=* microformat
 		 *
 		 * @param  {DOM node} node
 		 * @return {Boolean}
@@ -201,13 +179,13 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * returns the number rel=* microformat a node or its children contents
+		 * returns the number of rel=* microformats
 		 *
 		 * @param  {DOM node} node
 		 * @return {Int}
 		 */
 		modules.Parser.prototype.countRels = function(node) {
-			if(node && node.nodeType){
+			if(node){
 				return modules.domUtils.getNodesByAttribute(node, 'rel').length;
 			}
 			return 0;

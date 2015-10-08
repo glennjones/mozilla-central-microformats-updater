@@ -32,14 +32,7 @@ describe('Microformat.get', function() {
                 'text': 'French mobile homepage',
                 'rels': ['alternate', 'home']
             }
-        },
-        'alternates': [{
-            'media': 'handheld',
-            'hreflang': 'fr',
-            'text': 'French mobile homepage',
-            'url': 'http://example.com/fr',
-            'rel': 'home'
-        }]
+        }
     },
     html = '<div class="h-card"><a class="p-name u-url" rel="bookmark" href="http://glennjones.net">Glenn Jones</a></div><a rel="alternate home" href="http://example.com/fr" media="handheld" hreflang="fr">French mobile homepage</a>';
 
@@ -47,12 +40,11 @@ describe('Microformat.get', function() {
 
 
 
-    it('get - no options.node parse this document', function(){
+   it('get - no options.node parse this document', function(){
         var result;
 
         result = Microformats.get({});
         assert.deepEqual( result.items, [] );
-        
    });
   
     
@@ -70,7 +62,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'baseUrl': 'http://example.com'
+            'baseUrl': 'http://example.com',
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -93,7 +86,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': doc,
-            'baseUrl': 'http://example.com'
+            'baseUrl': 'http://example.com',
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -116,6 +110,7 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -139,101 +134,12 @@ describe('Microformat.get', function() {
         
         options ={
             'node': doc,
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
         assert.deepEqual( result, expected );
  
-   });
-   
-
-   it('get - include that does not exists', function(){
-       
-       var  doc,
-            node,
-            options,
-            result;
-            
-        var altHTML =   '<div class="vcard" itemref="mozilla-org mozilla-adr"><span class="fn">Brendan Eich</span></div><div class="vcard" itemref="mozilla-org mozilla-adr"><span class="fn">Mitchell Baker</span></div><p id="mozilla-org" class="org">Mozilla</p>';
-        var altExpected = {
-            'items': [{
-                'type': ['h-card'],
-                'properties': {
-                    'org': ['Mozilla'],
-                    'name': ['Brendan Eich']
-                }
-            },
-            {
-                'type': ['h-card'],
-                'properties': {
-                    'org': ['Mozilla'],
-                    'name': ['Mitchell Baker']
-                }
-            }],
-            'rels': {},
-            'rel-urls': {}
-        };   
-       
-        doc = document.implementation.createHTMLDocument('New Document');
-        node = document.createElement('div');
-        node.innerHTML = altHTML;
-        doc.body.appendChild(node);    
-        
-        options ={
-            'node': node,
-        };
-
-        result = Microformats.get(options);
-      
-        
-        assert.deepEqual( result, altExpected );
-        
-
- 
-   });
-   
-   it('get - impliedValueRule e-content', function(){
-       
-       var  doc,
-            node,
-            options,
-            result;
-            
-        var altHTML = '<div class="h-feed"><p class="p-name">Blog</a> <p class="h-entry"><span class="e-content">Mozilla Foundation</span></div>';
-        var altExpected = {
-                'items': [{
-                    'type': ['h-feed'],
-                    'properties': {
-                        'name': ['Blog']
-                    },
-                    'children': [{
-                        'value': 'Mozilla Foundation',
-                        'type': ['h-entry'],
-                        'properties': {
-                            'content': [{
-                                'value': 'Mozilla Foundation',
-                                'html': 'Mozilla Foundation'
-                            }],
-                            'name': ['Mozilla Foundation']
-                        }
-                    }]
-                }],
-                'rels': {},
-                'rel-urls': {}
-            };   
-       
-        doc = document.implementation.createHTMLDocument('New Document');
-        node =  document.createElement('div');
-        node.innerHTML = altHTML;
-        doc.body.appendChild(node);    
-        
-        options ={
-            'node': node,
-        };
-
-        result = Microformats.get(options); 
-        assert.deepEqual( result, altExpected );
-        
    });
    
    
@@ -256,7 +162,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'textFormat': 'normalised'
+            'textFormat': 'normalised',
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -285,7 +192,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'textFormat': 'whitespace'
+            'textFormat': 'whitespace',
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -315,7 +223,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'textFormat': 'whitespacetrimmed'
+            'textFormat': 'whitespacetrimmed',
+            'dateFormat': 'html5'
         };
         
         result = Microformats.get(options);
@@ -456,7 +365,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'filters': ['h-card']
+            'filters': ['h-card'],
+            'dateFormat': 'html5'
         };
  
         result = Microformats.get(options);
@@ -478,7 +388,7 @@ describe('Microformat.get', function() {
                 'type': ['h-event'],
                 'properties': {
                     'name': ['Pub'],
-                    'start': ['2015-07-01t17:30z']
+                    'start': ['2015-07-01 17:30Z']
                 }
             }],
             'rels': {},
@@ -493,7 +403,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'filters': ['h-event']
+            'filters': ['h-event'],
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -515,7 +426,7 @@ describe('Microformat.get', function() {
                     'type': ['h-event'],
                     'properties': {
                         'name': ['Pub'],
-                        'start': ['2015-07-01t17:30z']
+                        'start': ['2015-07-01 17:30Z']
                     }
                 },
                 {
@@ -537,7 +448,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'filter': ['h-event']
+            'filter': ['h-event'],
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -568,7 +480,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'filters': ['h-card']
+            'filters': ['h-card'],
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -590,8 +503,7 @@ describe('Microformat.get', function() {
                 'items': [{
                     'type': ['h-card'],
                     'properties': {
-                        'name': ['Glenn Jones'],
-                        'url': ['http://glennjones.net']
+                        'name': ['Glenn Jones']
                     }
                 }],
                 'rels': {},
@@ -606,7 +518,8 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'filter': ['h-card']
+            'filter': ['h-card'],
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
@@ -627,8 +540,7 @@ describe('Microformat.get', function() {
                 'items': [{
                     'type': ['h-payment'],
                     'properties': {
-                        'amount': ['36.78'],
-                        'name': ['£36.78']
+                        'amount': ['36.78']
                     }
                 }],
                 'rels': {},
@@ -650,11 +562,29 @@ describe('Microformat.get', function() {
         
         options ={
             'node': node,
-            'maps': v1Definition
+            'maps': v1Definition,
+            'dateFormat': 'html5'
         };
 
         result = Microformats.get(options);
         assert.deepEqual( result, altExpected );
+        
+   });
+   
+   
+    it('get - options.html', function(){
+       
+        var options,
+            result;
+ 
+        options ={
+            'html': html,
+            'baseUrl': 'http://example.com',
+            'dateFormat': 'html5'
+        };
+
+        result = Microformats.get(options);
+        assert.deepEqual( result, expected );
         
    });
 

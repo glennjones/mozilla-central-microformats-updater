@@ -31,7 +31,7 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * is the object a array
+		 * is the object an array
 		 *
 		 * @param  {Object} obj
 		 * @return {Boolean}
@@ -39,10 +39,21 @@ var Modules = (function (modules) {
 		isArray: function( obj ) {
 			return obj && !( obj.propertyIsEnumerable( 'length' ) ) && typeof obj === 'object' && typeof obj.length === 'number';
 		},
+		
+		
+		/**
+		 * is the object a function
+		 *
+		 * @param  {Object} obj
+		 * @return {Boolean}
+		 */
+		isFunction: function(obj) {
+			return !!(obj && obj.constructor && obj.call && obj.apply);
+		},
 	
 	
 		/**
-		 * does a text start with the string
+		 * does the text start with a test string
 		 *
 		 * @param  {String} text
 		 * @param  {String} test
@@ -132,12 +143,12 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * removes whitespace from a text (leaves a single space)
+		 * removes whitespace from text (leaves a single space)
 		 *
 		 * @param  {String} text
 		 * @return {Sring}
 		 */
-		removeWhiteSpace: function( text ){
+		collapseWhiteSpace: function( text ){
 			return text.replace(/[\t\n\r ]+/g, ' ');
 		},
 	
@@ -158,8 +169,6 @@ var Modules = (function (modules) {
 			return false;
 		},
 		
-		
-		// sort objects in an array by given property
 		
 		/**
 		 * a sort function - to sort objects in an array by a given property

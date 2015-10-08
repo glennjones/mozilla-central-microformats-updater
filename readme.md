@@ -17,7 +17,7 @@ The script will
 1. Checks the current build status of the project.
 2. Checks the date of the last commit
 3. Downloads and updates the following directories and files:
-	* microformat-shiv.js
+	* microformat-shiv.js (note: modern version)
 	* test/lib
 	* test/interface-tests
 	* test/module-tests

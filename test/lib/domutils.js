@@ -1,8 +1,8 @@
 /*
    dom utilities
-   The purpose of this module is abstract DOM functions away from the main parsing modules of the libraray.
-   It was created so the file can be replaced in node.js enviroment to make use different types of light weight node.js DOM's 
-   such as 'cherrio.js' It also contains a number dom utilities which are used throughout the parser such as: 'getDescendant'
+   The purpose of this module is to abstract DOM functions away from the main parsing modules of the library.
+   It was created so the file can be replaced in node.js environment to make use of different types of light weight node.js DOM's 
+   such as 'cherrio.js'. It also contains a number of DOM utilities which are used throughout the parser such as: 'getDescendant'
   
    Copyright (C) 2010 - 2015 Glenn Jones. All Rights Reserved.
    MIT License: https://raw.github.com/glennjones/microformat-shiv/master/license.txt 
@@ -15,7 +15,76 @@ var Modules = (function (modules) {
 	
 	modules.domUtils = {
 		
+		// blank objects for DOM
+		document: null,
+		rootNode: null,
 		
+		
+	     /**
+		 * configures what are the base DOM objects for parsing
+		 *
+		 * @param  {Object} options
+		 * @return {DOM Node} node
+		 */
+		getDOMContext: function( options ){
+				
+			// if a node is passed 
+			if(options.node){
+				this.rootNode = options.node;
+			}
+			
+			
+			// if a html string is passed
+			if(options.html){
+				var dom = new DOMParser();
+       			this.rootNode = dom.parseFromString( options.html, 'text/html' );
+			}
+			
+			
+			// find top level document from rootnode
+			if(this.rootNode !== null){
+				if(this.rootNode.nodeType === 9){
+					this.document = this.rootNode;
+					this.rootNode = modules.domUtils.querySelector(this.rootNode, 'html');
+				}else{
+					// if it's DOM node get parent DOM Document
+					this.document = modules.domUtils.ownerDocument(this.rootNode);
+				} 
+			}
+			
+
+			// use global document object
+			if(!this.rootNode && document){
+				this.rootNode = modules.domUtils.querySelector(document, 'html');
+				this.document = document;
+			}
+			
+			
+			if(this.rootNode && this.document){
+				return {document: this.document, rootNode: this.rootNode};
+			}
+			
+			return {document: null, rootNode: null};
+		},
+		
+		
+				
+		/**
+		* gets the first DOM node
+		*
+		* @param  {Dom Document}
+		* @return {DOM Node} node
+		*/
+		getTopMostNode: function( node ){
+			//var doc = this.ownerDocument(node);
+			//if(doc && doc.nodeType && doc.nodeType === 9 && doc.documentElement){
+			//	return doc.documentElement;
+			//}
+			return node;
+		},
+		
+		
+
 		 /**
 		 * abstracts DOM ownerDocument
 		 *
@@ -139,7 +208,7 @@ var Modules = (function (modules) {
 	
 	
 		/**
-		 * get value of an Node attribute as an Array
+		 * get value of a Node attribute as an array
 		 *
 		 * @param  {DOM Node} node
 		 * @param  {String} attributeName
@@ -174,9 +243,8 @@ var Modules = (function (modules) {
 		},
 	
 	
-		// gets all child nodes with a given attribute containing a given value
 		/**
-		 * does an attribute contain a value
+		 * gets all child nodes with a given attribute containing a given value
 		 *
 		 * @param  {DOM Node} node
 		 * @param  {String} attributeName
@@ -225,7 +293,7 @@ var Modules = (function (modules) {
 	
 		
 	   /**
-		 * get node if has no siblings CSS :only-child 
+		 * get node if it has no siblings. CSS equivalent is :only-child 
 		 *
 		 * @param  {DOM Node} rootNode
 		 * @param  {Array} tagNames
@@ -237,7 +305,7 @@ var Modules = (function (modules) {
 		
 		
         /**
-		 * get node if has no siblings of the same type  i.e. CSS :only-of-type
+		 * get node if it has no siblings of the same type. CSS equivalent is :only-of-type
 		 * 
 		 * @param  {DOM Node} rootNode
 		 * @param  {Array} tagNames
@@ -249,7 +317,7 @@ var Modules = (function (modules) {
 	
 	
 	    /**
-		 * get child node limited by presents of siblings - either CSS :only-of-type || :only-child 
+		 * get child node limited by presence of siblings - either CSS :only-of-type or :only-child 
 		 *
 		 * @param  {DOM Node} rootNode
 		 * @param  {Array} tagNames
@@ -412,7 +480,7 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * can environment clones a DOM document
+		 * can environment clone a DOM document
 		 *
 		 * @param  {DOM Document} document 
 		 * @return {Boolean}
@@ -423,7 +491,7 @@ var Modules = (function (modules) {
 		
 	
 		/**
-		 * get a node's child index used to create node path 
+		 * get the child index of a node. Used to create a node path 
 		 *
 		 *   @param  {DOM Node} node
 		 *   @return {Int}
@@ -476,7 +544,44 @@ var Modules = (function (modules) {
 			  node = node.childNodes[index];
 		  } 
 		  return node;
+		},
+		
+		
+		/**
+		* get an array/nodeList of child nodes 
+		*
+		*   @param  {DOM node} node
+		*   @return {Array}
+		*/
+		getChildren: function( node ){
+			return node.children;
+		},
+		
+		
+		/**
+		* create a node
+		*
+		*   @param  {String} tagName
+		*   @return {DOM node}
+		*/
+		createNode: function( tagName ){
+			return this.document.createElement(tagName);
+		},	
+		
+		
+		/**
+		* create a node with text content
+		*
+		*   @param  {String} tagName
+		*   @param  {String} text
+		*   @return {DOM node}
+		*/
+		createNodeWithText: function( tagName, text ){
+			var node = this.document.createElement(tagName);
+			node.innerHTML = text;
+			return node;
 		}
+		
 		
 
 	};

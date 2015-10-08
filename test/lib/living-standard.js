@@ -1,1 +1,1 @@
-	modules.livingStandard = '2015-07-14T08:11:14Z';
+	modules.livingStandard = '2015-09-25T12:26:04Z';

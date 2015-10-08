@@ -1,8 +1,8 @@
 /*
 	text
-	Extracts text string from DOM nodes. Was created extract text in a whitespace-normalized form. 
+	Extracts text string from DOM nodes. Was created to extract text in a whitespace-normalized form. 
 	It works like a none-CSS aware version of IE's innerText function. DO NOT replace this module 
-	with functions such as textContent as it will reduce the quality of data provided to API user.
+	with functions such as textContent as it will reduce the quality of data provided to the API user.
 	
 	Copyright (C) 2010 - 2015 Glenn Jones. All Rights Reserved.
 	MIT License: https://raw.github.com/glennjones/microformat-shiv/master/license.txt
@@ -25,12 +25,12 @@ var Modules = (function (modules) {
 			'li', 'map', 'menu', 'nav', 'optgroup', 'option', 'section', 'tbody', 'testarea', 
 			'tfoot', 'th', 'thead', 'tr', 'td', 'ul', 'ol', 'dl', 'details'],
 
-		// tags which have code metadata 
-		excludeTags: ['noframe', 'noscript', 'script', 'style', 'frames', 'frameset'],
+		// tags to exclude 
+		excludeTags: ['noframe', 'noscript', 'template', 'script', 'style', 'frames', 'frameset'],
  
 	
 		/**
-		 * parses the text from DOM Node 
+		 * parses the text from the DOM Node 
 		 *
 		 * @param  {DOM Node} node
 		 * @param  {String} textFormat
@@ -53,7 +53,7 @@ var Modules = (function (modules) {
 		
 		
 		/**
-		 * parses the text from html string 
+		 * parses the text from a html string 
 		 *
 		 * @param  {DOM Document} doc
 		 * @param  {String} text
@@ -61,14 +61,13 @@ var Modules = (function (modules) {
 		 * @return {String}
 		 */  
 		parseText: function( doc, text, textFormat ){
-		   var node = doc.createElement('div');
-		   node.innerHTML = text;
+		   var node = modules.domUtils.createNodeWithText( 'div', text );
 		   return this.parse( doc, node, textFormat );
 		},
 		
 		
 		/**
-		 * parses the text from html string - only for whitespace or whitespacetrimmed formats
+		 * parses the text from a html string - only for whitespace or whitespacetrimmed formats
 		 *
 		 * @param  {String} text
 		 * @param  {String} textFormat
@@ -101,7 +100,7 @@ var Modules = (function (modules) {
 		 */ 
 		normalise: function( doc, text ){
 			text = text.replace( /&nbsp;/g, ' ') ;    // exchanges html entity for space into space char
-			text = modules.utils.removeWhiteSpace( text );     // removes linefeeds, tabs and addtional spaces
+			text = modules.utils.collapseWhiteSpace( text );     // removes linefeeds, tabs and addtional spaces
 			text = modules.domUtils.decodeEntities( doc, text );  // decode HTML entities
 			text = text.replace( '–', '-' );          // correct dash decoding
 			return modules.utils.trim( text );
@@ -137,7 +136,7 @@ var Modules = (function (modules) {
 				}
 			}
 	
-			// if its a block level tag add an additional space at the end
+			// if it's a block level tag add an additional space at the end
 			if(node.tagName && this.blockLevelTags.indexOf( node.tagName.toLowerCase() ) !== -1){
 				out += ' ';
 			} 
