@@ -39,6 +39,7 @@ Updating mozilla-central
 Details on updating mozilla-central can be found on MDN, but as a quick reminder.
 ```sh
 $ hg pull -u
+$ ./mach build
 ```
 
 License

@@ -1,9 +1,9 @@
 /*!
 	update.js
-	
+
 	run $ npm install
 	run $ node unpdate.js
-	
+
 	Downloads latest version of microformat-shiv and it tests form github repo
 	Files downloaded:
 	* microformat-shiv.js (note: modern version)
@@ -12,14 +12,14 @@
 	* test/module-tests
 	* test/standards-tests
 	* test/static
-	
+
 	Copyright (C) 2015 Glenn Jones. All Rights Reserved.
 	MIT License: https://raw.github.com/glennjones/microformat-shiv/master/license.txt
 	*/
 
 // configuration
 var deployDir = '../'
-	exportedSymbol = 'this.EXPORTED_SYMBOLS = [\'Microformats\'];';
+	exportedSymbol = 'try {\n    // mozilla jsm support\n    Components.utils.importGlobalProperties(["URL"]);\n} catch(e) {}\nthis.EXPORTED_SYMBOLS = [\'Microformats\'];';
 
 
 
@@ -29,7 +29,7 @@ var path			= require('path'),
 	download 		= require('download-github-repo');
 
 
-var repo = 'glennjones/microformat-shiv', 
+var repo = 'glennjones/microformat-shiv',
 	tempDir = path.resolve(__dirname,'temp-repo'),
 	deployDirResolved = path.resolve(__dirname, deployDir),
 	pathList = [
@@ -40,15 +40,15 @@ var repo = 'glennjones/microformat-shiv',
 		['/test/standards-tests','/test/standards-tests'],
 		['/test/static','/test/static']
 		];
-		
+
 
 
 getLastBuildState( repo, function( err, buildState){
 	if(buildState){
 		console.log('last build state:', buildState);
-		
+
 		if(buildState === 'passed'){
-			
+
 			console.log('downloading git repo', repo);
 			getLastCommitDate( repo, function( err, date){
 				if(date){
@@ -56,11 +56,11 @@ getLastBuildState( repo, function( err, buildState){
 				}
 			});
 			updateFromRepo();
-			
+
 		}else{
 			console.log('not updating because of build state is failing please contact Glenn Jones glennjones@gmail.com');
 		}
-		
+
 	}else{
 		console.log('could not get build state from travis-ci:', err);
 	}
@@ -70,28 +70,28 @@ getLastBuildState( repo, function( err, buildState){
 /**
  * updates from directories and files from repo
  *
- */	
+ */
 function updateFromRepo(){
 	download(repo, tempDir, function(err, data){
-		
+
 		// the err and data from download-github-repo give false negatives
 		if( fs.existsSync( tempDir ) ){
-			
+
 			var version = getRepoVersion();
 			removeCurrentFiles( pathList, deployDirResolved );
-			addNewFiles( pathList, deployDirResolved );		
+			addNewFiles( pathList, deployDirResolved );
 			fs.removeSync(tempDir);
-			
+
 			// changes files for firefox
 			replaceInFile('/test/module-tests/index.html', /..\/..\/lib\//g, '../lib/' );
 			addExportedSymbol( '/microformat-shiv.js' );
-			
+
 			console.log('microformat-shiv is now uptodate to v' + version);
-	
+
 		}else{
 			console.log('error getting repo', err);
 		}
-	
+
 	});
 }
 
@@ -101,30 +101,30 @@ function updateFromRepo(){
  *
  * @param  {Array} pathList
  * @param  {String} deployDirResolved
- */	
+ */
 function removeCurrentFiles( pathList, deployDirResolved ){
 	pathList.forEach( function( path ){
 		console.log('removed:', deployDirResolved + path[1]);
 		fs.removeSync(deployDirResolved + path[1]);
 	});
-}	
-	
-	
+}
+
+
 /**
  * copies over required directories and files into deployed path
  *
  * @param  {Array} pathList
  * @param  {String} deployDirResolved
- */	
+ */
 function addNewFiles( pathList, deployDirResolved ){
 	pathList.forEach( function( path ){
 		console.log('added:', deployDirResolved + path[1]);
 		fs.copySync(tempDir + path[0], deployDirResolved + path[1]);
 	});
-	
-}	
-	
-		
+
+}
+
+
 /**
  * gets the repo version number
  *
@@ -149,14 +149,14 @@ function getRepoVersion(){
  * @param  {Function} callback
  */
 function getLastCommitDate( repo, callback ){
-	
+
 	var options = {
 	  url: 'https://api.github.com/repos/' + repo + '/commits?per_page=1',
 	  headers: {
 	    'User-Agent': 'request'
 	  }
 	};
-	
+
 	request(options, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		var date = null,
@@ -167,7 +167,7 @@ function getLastCommitDate( repo, callback ){
 	    callback(null, date);
 	  }else{
 		  console.log(error, response, body);
-		  callback('fail to get last commit date', null); 
+		  callback('fail to get last commit date', null);
 	  }
 	});
 }
@@ -180,7 +180,7 @@ function getLastCommitDate( repo, callback ){
  * @param  {Function} callback
  */
 function getLastBuildState( repo, callback ){
-	
+
 	var options = {
 	  url: 'https://api.travis-ci.org/repos/' + repo,
 	  headers: {
@@ -188,7 +188,7 @@ function getLastBuildState( repo, callback ){
 		'Accept': 'application/vnd.travis-ci.2+json'
 	  }
 	};
-	
+
 	request(options, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		var buildState = null,
@@ -199,7 +199,7 @@ function getLastBuildState( repo, callback ){
 	    callback(null, buildState);
 	  }else{
 		  console.log(error, response, body);
-		  callback('fail to get last build state', null); 
+		  callback('fail to get last build state', null);
 	  }
 	});
 }
@@ -225,7 +225,7 @@ function addExportedSymbol( path ){
  * @param  {String} path
  * @param  {String} content
  */
-function replaceInFile( path, findStr, replaceStr ){	
+function replaceInFile( path, findStr, replaceStr ){
 	readFile(deployDirResolved + path, function(err, fileStr){
 		if(fileStr){
 			fileStr = fileStr.replace(findStr, replaceStr)
@@ -234,7 +234,7 @@ function replaceInFile( path, findStr, replaceStr ){
 		}else{
 			console.log('error replaced strings in ' + path);
 		}
-	})	
+	})
 }
 
 
@@ -251,7 +251,7 @@ function writeFile(path, content){
 		} else {
 			console.log('The file: ' + path + ' was saved');
 		}
-	}); 
+	});
 }
 
 
